@@ -1,0 +1,45 @@
+{
+  "name": "snowpack-plugin-content-hash",
+  "version": "0.0.1-draft",
+  "author": "akejolin",
+  "description": "A plugin for snowpack which will add a hash in the file name. The hash is based on the files content.",
+  "license": "MIT",
+  "main": "plugin.js",
+  "scripts": {
+    "build": "pika build",
+    "deploy": "pika publish",
+    "version": "npm run build"
+  },
+  "keywords": [
+    "snowpack",
+    "snowpack-plugin",
+    "content-hash",
+    "hash",
+    "cache"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akejolin/snowpack-plugin-content-hash.git"
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg"
+      ],
+      [
+        "@pika/plugin-build-node"
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.9.2",
+    "@pika/plugin-ts-standard-pkg": "^0.9.2",
+    "snowpack": "^2.6.4",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "recursive-readdir": "^2.2.2"
+  }
+}
