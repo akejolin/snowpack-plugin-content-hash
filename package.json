@@ -39,7 +39,10 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
+    "@babel/core": "^7.11.5",
     "crypto": "^1.0.1",
-    "recursive-readdir": "^2.2.2"
+    "esprima": "^4.0.1",
+    "recursive-readdir": "^2.2.2",
+    "replace": "^1.2.0"
   }
 }
