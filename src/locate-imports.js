@@ -25,7 +25,7 @@ const locateImports = (fileList) => {
         }
       })
     } catch (err) {
-      console.log('Error parsing ecma script with file: ', file, err)
+      console.log('Error parsing ecma script with file: ', location, err)
     }
     return {
       location,
