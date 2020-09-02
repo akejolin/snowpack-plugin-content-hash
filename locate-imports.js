@@ -1,7 +1,7 @@
 const esprima = require('esprima')
 const fs = require('fs')
 
-const locateImports = fileList => {
+const locateImports = (fileList) => {
   const result = fileList.map(location => {
     var stat = fs.statSync(location);
     if (!stat.isFile()) {
@@ -19,7 +19,7 @@ const locateImports = fileList => {
         sourceType: 'module',
         tolerant: true,
       })
-      tree.body.forEach(function(node) {
+      tree.body.forEach(node => {
         if (node.type === 'ImportDeclaration') {
           imports.push(node.source.value);
         }

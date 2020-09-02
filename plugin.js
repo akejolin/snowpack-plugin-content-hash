@@ -6,6 +6,11 @@ const replace = require('replace');
 const locateImports = require('./locate-imports');
 
 
+// defaults
+let isDev = true;
+const defaultExt = ['js', 'jsx']
+
+
 const createHashFromFile = filePath => new Promise(resolve => {
   const hash = crypto.createHash('md5');
   fs.createReadStream(filePath).on('data', data => hash.update(data)).on('end', () => resolve(hash.digest('hex')));
@@ -34,10 +39,25 @@ const createReference = async file => {
   return result
 }
 
+const formatOptions = options => {
+  const {
+    exts,
+    silent,
+  } = options || {}
+
+  let _exts = Array.isArray(exts) && exts.length > 0 ? exts.map(ext => ext.replace(/\./, '')) : defaultExt
+  // ToDo: We may find other solutions for other filetypes in the future. But for now, only .js and .jsx are valid.
+  _exts = _exts.filter(e => defaultExt.find(ext => ext === e))
+
+  return {
+    exts: _exts,
+    silent: typeof silent === 'boolean' ? silent : true
+  }
+}
+
 const plugin = (snowpackConfig, pluginOptions) => {
-  // defaults
-  let isDev = true;
-  const defaultExt = ['js', 'jsx']
+
+  const { exts, silent } = formatOptions(pluginOptions)
 
   return {
     name: "snowpack-plugin-content-hash",
@@ -46,6 +66,9 @@ const plugin = (snowpackConfig, pluginOptions) => {
     },
 
     async optimize({ buildDirectory }) {
+      if (isDev) {
+        return
+      }
       /*
       * 1. Create reference including content hash of all
       * wanted file extensions, within the build dir.
@@ -58,7 +81,7 @@ const plugin = (snowpackConfig, pluginOptions) => {
       * 2. Locate all imports made within the built dir
       */
       const importsInFileList = locateImports(
-        referenceFiles.filter(f => f.ext === 'js').map(f => f.file)
+        referenceFiles.filter(ref => exts.find(ext => ext === ref.ext)).map(ref => ref.file),
       )
 
       /*
@@ -74,14 +97,12 @@ const plugin = (snowpackConfig, pluginOptions) => {
             const hash = verifiedImport.hash || ''
             readyForImplementation.push({
               location: file.location,
-              testImport,
               importPath: imp,
               hash, // Add content hash for implementation later on
             })
           }
         })
       })
-
 
       /*
       * 4. Inject hash into imports
@@ -94,6 +115,14 @@ const plugin = (snowpackConfig, pluginOptions) => {
         recursive: true,
         silent: true,
       }))
+
+      // Log output implementation
+      if (!silent) {
+        readyForImplementation.forEach(file => {
+          console.log(file)
+        })
+      }
+      
     }
   }
 }
