@@ -2,11 +2,18 @@ const esprima = require('esprima')
 const fs = require('fs')
 
 const locateImports = (fileList) => {
-  const result = fileList.map(location => {
-    var stat = fs.statSync(location);
-    if (!stat.isFile()) {
-        return;
+  let result = fileList.map(location => {
+
+    if (!fs.existsSync(location)) {
+      return null
     }
+
+    const stat = fs.statSync(location);
+
+    if (!stat.isFile()) {
+      return null
+    }
+
     let content = fs.readFileSync(location, 'utf-8')
     let tree = []
     const imports = []
@@ -31,7 +38,9 @@ const locateImports = (fileList) => {
       location,
       imports,
     }
-  })
+
+  }).filter(f => f !== null)
+
   return result
 }
 module.exports = locateImports;
