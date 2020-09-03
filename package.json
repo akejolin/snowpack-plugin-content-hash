@@ -1,6 +1,6 @@
 {
   "name": "snowpack-plugin-content-hash",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "akejolin",
   "description": "A plugin for snowpack which will add a hash in the file name. The hash is based on the files content.",
   "license": "MIT",

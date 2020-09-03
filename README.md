@@ -2,7 +2,7 @@
 This small snowpack plugin will add a *content hash* to your imports paths. The hash is created on build command. If no changes is made within the files, the hash will result the same as last build.
 
 ### Why content hash
-Content hash is useful for cache control in the browser. Once the hash is new the browser will download the file.
+Content based hash, is a great way of taking control over when the browser should point the request towards its cache or not. Once the hash is updated the browser will download the file.
 
 ## Get started
 ```bash
