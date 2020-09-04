@@ -132,13 +132,16 @@ const plugin = (snowpackConfig, pluginOptions) => {
       const indexJSfile = 'site-modules/index.js'
       const ref = referenceFiles.find(ref => ref.file === path.join(buildDirectory, indexJSfile))
       const print = ref ? `-${ref.hash}` : ''
-      replace({
+
+      if (fs.existsSync(htmlContent)) {
+        replace({
           regex: indexJSfile,
           replacement: `site-modules/index${print}.js`,
           paths: [htmlContent],
           recursive: true,
           silent: true
-      })
+        })
+      }
 
       /*
       * 7. Log output implementation
