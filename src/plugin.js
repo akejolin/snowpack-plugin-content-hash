@@ -5,36 +5,29 @@ const path = require('path');
 const replace = require('replace');
 const locateImports = require('./locate-imports');
 
+const {
+  createHashFromFile,
+  extractDirInPath,
+  extractFileInPath
+} = require('./utils.js');
 
 // defaults
 let isDev = true;
 const defaultExt = ['js', 'jsx']
 
 
-const createHashFromFile = filePath => new Promise(resolve => {
-  const hash = crypto.createHash('md5');
-  fs.createReadStream(filePath).on('data', data => hash.update(data)).on('end', () => resolve(hash.digest('hex')));
-});
-
-const getCurrentDirPath = file => {
-  const filePathSplit = file.split('/')
-  return filePathSplit.splice(0, filePathSplit.length - 1)
-}
-
 const createReference = async file => {
   const hash = await createHashFromFile(file).then(hash => hash)
-  // Get origin file name
-  let filePathSplit = file.split('/')
-  const originFileName = filePathSplit[filePathSplit.length - 1]
-  let fileNameSplit = originFileName.split('.')
   // Get file extension
-  const ext = fileNameSplit[fileNameSplit.length - 1]
+  const fileName = extractFileInPath(file)
+
+
 
   // Create complete new file path
   const result = {
     file,
     hash,
-    ext,
+    ext: fileName.ext,
   }
   return result
 }
@@ -77,6 +70,7 @@ const plugin = (snowpackConfig, pluginOptions) => {
       const promiseReferenceFiles = files.map(file => createReference(file))
       const referenceFiles = await Promise.all(promiseReferenceFiles).then(res => res)
 
+
       /*
       * 2. Locate all imports made within the built dir
       */
@@ -89,14 +83,18 @@ const plugin = (snowpackConfig, pluginOptions) => {
       */
       const readyForImplementation = []
 
-      importsInFileList.forEach(file => {
-        file.imports.forEach(imp => {
-          const testImport = path.resolve(getCurrentDirPath(file.location).join('/'), imp)
-          const verifiedImport = referenceFiles.find(t => t.file === testImport)
+      importsInFileList.forEach(host => {
+        host.imports.forEach(imp => {
+          const testImport = path.resolve(extractDirInPath(host.location).str, imp)
+
+          const verifiedImport = referenceFiles.find(ref => ref.file === testImport)
           if (verifiedImport) {
+            if (!exts.find(ext => ext === extractFileInPath(imp).ext)) {
+              return
+            }
             const hash = verifiedImport.hash || ''
             readyForImplementation.push({
-              location: file.location,
+              hostLocation: host.location,
               importPath: imp,
               hash, // Add content hash for implementation later on
             })
@@ -108,21 +106,35 @@ const plugin = (snowpackConfig, pluginOptions) => {
       * 4. Inject hash into imports
       */
 
-      readyForImplementation.forEach(async ({location, importPath, hash}) => replace({
+      readyForImplementation.forEach(async ({hostLocation, importPath, hash}) => replace({
         regex: importPath,
-        replacement: `${importPath}?hash=${hash}`,
-        paths: [location],
+        replacement: `${extractDirInPath(importPath).str}/${extractFileInPath(importPath).name}-${hash}.${extractFileInPath(importPath).ext}`,
+        paths: [hostLocation],
         recursive: true,
         silent: true,
       }))
 
-      // Log output implementation
+      /*
+      * 5. Rename files
+      */
+
+      referenceFiles.forEach(ref => {
+        if (exts.find(ext => ext === ref.ext)) {
+          const newPath = `${extractDirInPath(ref.file).str}/${extractFileInPath(ref.file).name}-${ref.hash}.${extractFileInPath(ref.file).ext}`
+          fs.renameSync( ref.file, newPath)
+        }
+      })
+
+
+      /*
+      * 6. Log output implementation
+      */
+
       if (!silent) {
         readyForImplementation.forEach(file => {
           console.log(file)
         })
       }
-      
     }
   }
 }
