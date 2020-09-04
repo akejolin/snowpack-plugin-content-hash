@@ -128,12 +128,13 @@ const plugin = (snowpackConfig, pluginOptions) => {
       /*
       * 6. Adjust html file
       */
-      const htmlContent = path.join(buildDirectory, htmlFile) // fs.readFileSync(path.join(buildDirectory, htmlFile), 'utf-8')
-      const indexJSfile = path.join(buildDirectory, 'site-modules/index.js',)
-
+      const htmlContent = path.join(buildDirectory, htmlFile)
+      const indexJSfile = 'site-modules/index.js'
+      const ref = referenceFiles.find(ref => ref.file === path.join(buildDirectory, indexJSfile))
+      const print = ref ? `-${ref.hash}` : ''
       replace({
-          regex: importPath,
-          replacement: `${extractDirInPath(importPath).str}/${extractFileInPath(importPath).name}-${hash}.${extractFileInPath(importPath).ext}`,
+          regex: indexJSfile,
+          replacement: `site-modules/index${print}.js`,
           paths: [htmlContent],
           recursive: true,
           silent: true
