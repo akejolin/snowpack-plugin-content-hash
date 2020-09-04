@@ -1,0 +1,3 @@
+/src/__mock__/*
+/node_modules/*
+**/*.test.js

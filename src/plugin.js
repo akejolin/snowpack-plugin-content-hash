@@ -1,5 +1,4 @@
 const recursive = require('recursive-readdir')
-const crypto = require('crypto')
 const fs = require('fs');
 const path = require('path');
 const replace = require('replace');
@@ -15,7 +14,6 @@ const {
 let isDev = false;
 const defaultExt = ['js', 'jsx']
 const htmlFileDefault = '/index.html'
-
 
 const createReference = async file => {
   const hash = await createHashFromFile(file).then(hash => hash)
