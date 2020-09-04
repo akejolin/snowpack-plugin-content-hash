@@ -6,10 +6,9 @@
   "license": "MIT",
   "main": "src/plugin.js",
   "scripts": {
-    "build": "pika build",
-    "deploy": "pika publish",
-    "version": "npm run build",
-    "test": "jest -u",
+    "clean": "rm -rf build",
+    "build": "npm run clean && mkdir build && cp -r src/__mock__ build/__mock__",
+    "test": "npm run build && jest -u",
     "lint": "eslint src"
   },
   "keywords": [
@@ -23,25 +22,11 @@
     "type": "git",
     "url": "git+https://github.com/akejolin/snowpack-plugin-content-hash.git"
   },
-  "@pika/pack": {
-    "pipeline": [
-      [
-        "@pika/plugin-ts-standard-pkg"
-      ],
-      [
-        "@pika/plugin-build-node"
-      ]
-    ]
-  },
   "devDependencies": {
-    "@pika/pack": "^0.5.0",
-    "@pika/plugin-build-node": "^0.9.2",
-    "@pika/plugin-ts-standard-pkg": "^0.9.2",
     "eslint": "^7.8.1",
     "eslint-plugin-react": "^7.20.6",
     "jest": "^26.4.2",
-    "snowpack": "^2.6.4",
-    "typescript": "^3.9.7"
+    "snowpack": "^2.6.4"
   },
   "dependencies": {
     "crypto": "^1.0.1",

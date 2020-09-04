@@ -12,22 +12,19 @@ const {
 } = require('./utils.js');
 
 // defaults
-let isDev = true;
+let isDev = false;
 const defaultExt = ['js', 'jsx']
+const htmlFileDefault = '/index.html'
 
 
 const createReference = async file => {
   const hash = await createHashFromFile(file).then(hash => hash)
   // Get file extension
-  const fileName = extractFileInPath(file)
-
-
-
   // Create complete new file path
   const result = {
     file,
     hash,
-    ext: fileName.ext,
+    ext: extractFileInPath(file).ext,
   }
   return result
 }
@@ -36,6 +33,7 @@ const formatOptions = options => {
   const {
     exts,
     silent,
+    htmlFile,
   } = options || {}
 
   let _exts = Array.isArray(exts) && exts.length > 0 ? exts.map(ext => ext.replace(/\./, '')) : defaultExt
@@ -44,13 +42,14 @@ const formatOptions = options => {
 
   return {
     exts: _exts,
-    silent: typeof silent === 'boolean' ? silent : true
+    silent: typeof silent === 'boolean' ? silent : true,
+    htmlFile: typeof htmlFile === 'string' ? htmlFile : htmlFileDefault
   }
 }
 
 const plugin = (snowpackConfig, pluginOptions) => {
 
-  const { exts, silent } = formatOptions(pluginOptions)
+  const { exts, silent, htmlFile } = formatOptions(pluginOptions)
 
   return {
     name: "snowpack-plugin-content-hash",
@@ -127,7 +126,20 @@ const plugin = (snowpackConfig, pluginOptions) => {
 
 
       /*
-      * 6. Log output implementation
+      * 6. Adjust html file
+      */
+      const htmlContent = path.join(buildDirectory, htmlFile) // fs.readFileSync(path.join(buildDirectory, htmlFile), 'utf-8')
+
+      replace({
+          regex: importPath,
+          replacement: `${extractDirInPath(importPath).str}/${extractFileInPath(importPath).name}-${hash}.${extractFileInPath(importPath).ext}`,
+          paths: [htmlContent],
+          recursive: true,
+          silent: true,
+      }))
+
+      /*
+      * 7. Log output implementation
       */
 
       if (!silent) {
