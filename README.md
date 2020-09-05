@@ -4,7 +4,7 @@ This small snowpack plugin will add a *content hash* to your imports paths. The 
 ### Why content hash
 If you do not want bundled production code, then cache control of each imported module is getting more important. Specially if you use some sort of cache service in front of your application, for instance CloudFront.
  
-Content based hash, is a great way of taking control over whether the browser should point the request towards its cache or the server. Once there are some changes made within the file, the hash will be updated and the browser will then re-download the it.
+Content based hash, is a great way of taking control over whether the browser should point the request towards its cache or the server. Once there are some changes made within the file, the hash will be updated and the browser will then re-download it.
 
 ## Get started
 ```bash
