@@ -1,3 +1,4 @@
 /src/__mock__/*
 /node_modules/*
+/build/*
 **/*.test.js

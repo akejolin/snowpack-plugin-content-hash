@@ -1,12 +1,21 @@
 const path = require('path')
+const fs = require('fs')
+const recursive = require('recursive-readdir')
 const snowpackPluginContentHash = require('./plugin')
+const locateImports = require('./locate-imports')
+const { extractFileInPath } = require('./utils.js');
 
 describe('snowpack-plugin-content-hash', () => {
-  it('should add a hashtag on every import paths', async () => {
+  it('should add a content hash on files in build dir', async () => {
     const buildDirectory = path.join(process.cwd(), 'build/__mock__')
     const plugin = snowpackPluginContentHash({}, {})
-    await plugin.optimize({buildDirectory}) 
-    expect(true).toEqual(true)
+    await plugin.optimize({ buildDirectory })
+
+    const fileExist = (location) => fs.existsSync(location)
+    let isHashed = fileExist(path.resolve(process.cwd(), 'build/__mock__/site_modules/index-7f20daec21535b94bf62ba0dec2811bf.js'))
+    isHashed = isHashed ? fileExist(path.resolve(process.cwd(), 'build/__mock__/web_modules/react-d41d8cd98f00b204e9800998ecf8427e.js')) : isHashed
+    expect(isHashed).toEqual(true)
+
   })
 })
 
