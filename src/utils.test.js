@@ -7,7 +7,7 @@ const {
 
 describe('createHashFromFile', () => {
   it('should create a content based hash of a file', async () => {
-    const file = `${path.join(__dirname, '__mock__/site_modules/index.js')}`
+    const file = `${path.join(__dirname, '__mock__/__dist__/index.js')}`
     const hash = await createHashFromFile(file).then(hash => hash)
     expect(hash).toEqual("7f20daec21535b94bf62ba0dec2811bf")
   })

@@ -18,7 +18,7 @@ describe('snowpack-plugin-content-hash', () => {
   it('should add a content hash on files in build dir', () => {
 
     const fileExist = (location) => fs.existsSync(location)
-    let isHashed = fileExist(path.resolve(process.cwd(), 'build/__mock__/site_modules/index-7f20daec21535b94bf62ba0dec2811bf.js'))
+    let isHashed = fileExist(path.resolve(process.cwd(), 'build/__mock__/__dist__/index-7f20daec21535b94bf62ba0dec2811bf.js'))
     isHashed = isHashed ? fileExist(path.resolve(process.cwd(), 'build/__mock__/web_modules/react-d41d8cd98f00b204e9800998ecf8427e.js')) : isHashed
     expect(isHashed).toEqual(true)
   })
@@ -26,7 +26,7 @@ describe('snowpack-plugin-content-hash', () => {
 
   it('should add content hash on import paths', () => {
     const importsInFileList = locateImports([
-      path.resolve(process.cwd(), 'build/__mock__/site_modules/index-7f20daec21535b94bf62ba0dec2811bf.js'),
+      path.resolve(process.cwd(), 'build/__mock__/__dist__/index-7f20daec21535b94bf62ba0dec2811bf.js'),
     ])
     expect(importsInFileList[0].imports).toEqual([
       '../__snowpack__/env-999a70d0b2c562f4b06f8f76b2a78200.js',

@@ -48,7 +48,8 @@ const formatOptions = options => {
 
 const plugin = (snowpackConfig, pluginOptions) => {
 
-  const mountSrc = snowpackConfig.mount['src/'] && snowpackConfig.mount['src/'] !== '' ? snowpackConfig.mount['src/'].replace(/\/$/, '').replace(/^\//, '') : defaultMount
+  const snowpackConfigMountSource = snowpackConfig.mount ? snowpackConfig.mount['src/'] : ''
+  const mountSrc = snowpackConfigMountSource !== '' ? snowpackConfigMountSource.replace(/\/$/, '').replace(/^\//, '') : defaultMount
 
   const { exts, silent, htmlFile } = formatOptions(pluginOptions)
 
