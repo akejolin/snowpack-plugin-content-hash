@@ -14,6 +14,7 @@ const {
 let isDev = false;
 const defaultExt = ['js', 'jsx']
 const htmlFileDefault = '/index.html'
+const defaultMount = '__dist__'
 
 const createReference = async file => {
   const hash = await createHashFromFile(file).then(hash => hash)
@@ -46,6 +47,8 @@ const formatOptions = options => {
 }
 
 const plugin = (snowpackConfig, pluginOptions) => {
+
+  const mountSrc = snowpackConfig.mount['src/'] && snowpackConfig.mount['src/'] !== '' ? snowpackConfig.mount['src/'].replace(/\/$/, '').replace(/^\//, '') : defaultMount
 
   const { exts, silent, htmlFile } = formatOptions(pluginOptions)
 
@@ -127,14 +130,14 @@ const plugin = (snowpackConfig, pluginOptions) => {
       * 6. Adjust html file
       */
       const htmlContent = path.join(buildDirectory, htmlFile)
-      const indexJSfile = 'site-modules/index.js'
+      const indexJSfile = `${mountSrc}/index.js`
       const ref = referenceFiles.find(ref => ref.file === path.join(buildDirectory, indexJSfile))
       const print = ref ? `-${ref.hash}` : ''
 
       if (fs.existsSync(htmlContent)) {
         replace({
           regex: indexJSfile,
-          replacement: `site-modules/index${print}.js`,
+          replacement: `${mountSrc}/index${print}.js`,
           paths: [htmlContent],
           recursive: true,
           silent: true
