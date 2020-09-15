@@ -16,8 +16,8 @@ const defaultExt = ['js', 'jsx']
 const htmlFileDefault = '/index.html'
 const defaultMount = '__dist__'
 
-const createReference = async file => {
-  const hash = await createHashFromFile(file).then(hash => hash)
+const createReference = async (file, opts) => {
+  const hash = await createHashFromFile(file, opts).then(hash => hash)
   // Get file extension
   // Create complete new file path
   const result = {
@@ -68,7 +68,7 @@ const plugin = (snowpackConfig, pluginOptions) => {
       * wanted file extensions, within the build dir.
       */
       const files = await recursive(buildDirectory).then(files => files)
-      const promiseReferenceFiles = files.map(file => createReference(file))
+      const promiseReferenceFiles = files.map(file => createReference(file, pluginOptions))
       const referenceFiles = await Promise.all(promiseReferenceFiles).then(res => res)
 
 
