@@ -1,9 +1,10 @@
 const crypto = require('crypto')
 const fs = require('fs');
 
-const createHashFromFile = filePath => new Promise(resolve => {
-  const hash = crypto.createHash('md5');
-  fs.createReadStream(filePath).on('data', data => hash.update(data)).on('end', () => resolve(hash.digest('hex')));
+const createHashFromFile = (filePath, { hashLength, hashAlgorithm } = {}) => new Promise(resolve => {
+  const hash = crypto.createHash(hashAlgorithm || 'md5');
+  const substr = value => hashLength ? value.substring(0, hashLength) : value;
+  fs.createReadStream(filePath).on('data', data => hash.update(data)).on('end', () => resolve(substr(hash.digest('hex'))));
 });
 
 const extractDirInPath = _path => {
