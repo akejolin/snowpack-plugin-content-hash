@@ -28,18 +28,20 @@ describe('createHashFromFile', () => {
   })
 })
 describe('extractDirInPath', () => {
-  it('should return an object with arr and str', async () => {
+  it('should return an object with arr path, str path and dir name', async () => {
     const target = extractDirInPath('/base/sub/path/some-unknown-file.js')
     expect(target).toEqual({
       arr: ["", "base", "sub", "path"],
-      str: "/base/sub/path"
+      str: "/base/sub/path",
+      dir: "path"
     })
   })
-  it('should manage a not a fully path', async () => {
+  it('should manage a path without specified file name', async () => {
     const target = extractDirInPath('/base/sub/path/some-unknown-file')
     expect(target).toEqual({
-      arr: ["", "base", "sub", "path"],
-      str: "/base/sub/path"
+      arr: ["", "base", "sub", "path", "some-unknown-file"],
+      str: "/base/sub/path/some-unknown-file",
+      dir: "some-unknown-file"
     })
   })
 })

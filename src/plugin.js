@@ -46,9 +46,18 @@ const formatOptions = options => {
   }
 }
 
-const plugin = (snowpackConfig, pluginOptions) => {
+const getMountSrc = mountData => {
+  for (const key in mountData) {
+    console.log(key, extractDirInPath(key).dir)
+    if (extractDirInPath(key).dir === 'src') {
+      return `${mountData[key]}`
+    }
+  }
+  return ''
+}
 
-  const snowpackConfigMountSource = snowpackConfig.mount ? snowpackConfig.mount['src/'] : ''
+const plugin = (snowpackConfig, pluginOptions) => {
+  const snowpackConfigMountSource = snowpackConfig.mount ? getMountSrc(snowpackConfig.mount) : ''
   const mountSrc = snowpackConfigMountSource !== '' ? snowpackConfigMountSource.replace(/\/$/, '').replace(/^\//, '') : defaultMount
 
   const { exts, silent, htmlFile } = formatOptions(pluginOptions)

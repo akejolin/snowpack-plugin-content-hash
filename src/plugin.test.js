@@ -34,7 +34,6 @@ describe('snowpack-plugin-content-hash', () => {
       '../web_modules/react-dom-d41d8cd98f00b204e9800998ecf8427e.js',
       './App-a529301310a0d2f1df8bd812e15b1f5a.js',
     ])
-
   })
 })
 

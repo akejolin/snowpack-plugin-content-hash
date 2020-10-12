@@ -8,11 +8,16 @@ const createHashFromFile = (filePath, { hashLength, hashAlgorithm } = {}) => new
 });
 
 const extractDirInPath = _path => {
-  let arr = _path.split('/')
-  arr = arr.splice(0, arr.length - 1)
+  let _arr = _path.split('/')
+  const ending = _arr[_arr.length - 1].split('.')
+
+  const dir = ending.length > 1 ? _arr[_arr.length-2] : _arr[_arr.length-1]
+  const arr = ending.length > 1 ? _arr.splice(0, _arr.length - 1) : _arr
+
   return {
     arr,
-    str: arr.join('/')
+    str: arr.join('/'),
+    dir
   }
 }
 
