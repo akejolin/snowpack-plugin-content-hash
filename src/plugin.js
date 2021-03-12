@@ -50,7 +50,9 @@ const getMountSrc = mountData => {
   for (const key in mountData) {
     console.log(key, extractDirInPath(key).dir)
     if (extractDirInPath(key).dir === 'src') {
-      return `${mountData[key]}`
+      return Object.keys(mountData[key] || {}).find((i) => i === 'url')
+        ? `${mountData[key].url}`
+        : `${mountData[key]}`;
     }
   }
   return ''
